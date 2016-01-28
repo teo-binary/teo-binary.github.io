@@ -5,7 +5,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   <script>
   function login() {
-    if ($("#user_name").val().length <= 0 || $("#client_email").val().length <= 0) {
+    if ($("#user_name").val().length == 0 || $("#client_email").val().length == 0) {
       alert('Staff E-mail and Client Email field must be present!');
     }
     else {
@@ -22,10 +22,15 @@
           dataType: "json",
 
           success: function(response) {
-            $("#status").text("Search returned " + response['data'].length + ' result(s)');
-            if (response['data'].length > 0) {
-              $('#result').attr('border', '1');
-              buildHtmlTable($("#result"), response['data'])
+            if (response['data'] != undefined) {
+              $("#status").text("Search returned " + response['data'].length + ' result(s)');
+              if (response['data'].length > 0) {
+                $('#result').attr('border', '1');
+                buildHtmlTable($("#result"), response['data'])
+              }
+            }
+            else {
+              $("#status").text(response['status']);
             }
           },
 
