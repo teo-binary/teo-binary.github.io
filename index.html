@@ -3,96 +3,9 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Email status checker</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-  <script>
-  function login() {
-    if ($("#user_name").val().length == 0 || $("#client_email").val().length == 0) {
-      alert('Staff E-mail and Client Email field must be present!');
-    }
-    else {
-      $("#status").text("Waiting for Duo security approval...");
-      $.ajax({
-          type: "POST",
-          url: "https://5cle1zylhj.execute-api.us-east-1.amazonaws.com/production/check_email_status",
-          data: JSON.stringify({
-            login: $("#user_name").val(),
-            duo_code: $("#duo_code").val(),
-            client_email: $("#client_email").val()
-          }),
-          contentType: "application/json; charset=utf-8",
-          dataType: "json",
-
-          success: function(response) {
-            if (response['data'] != undefined) {
-              $("#status").text("Search returned " + response['data'].length + ' result(s)');
-              if (response['data'].length > 0) {
-                $('#result').attr('border', '1');
-                buildHtmlTable($("#result"), response['data'])
-              }
-            }
-            else {
-              $("#status").text(response['status']);
-            }
-          },
-
-          failure: function(error) {
-            $("#status").text("Duo authentication failed");
-            console.log(error);
-          }
-      });
-    }
-  }
-
-  function buildHtmlTable(selector, myList) {
-    var columns = addAllColumnHeaders(myList, selector);
-
-    for (var i = 0 ; i < myList.length ; i++) {
-      var row$ = $('<tr/>');
-      for (var colIndex = 0 ; colIndex < columns.length ; colIndex++) {
-        var cellValue = myList[i][columns[colIndex]];
-        if (cellValue == null) { cellValue = ""; }
-        row$.append($('<td/>').html(cellValue));
-      }
-      $(selector).append(row$);
-    }
-  }
-
-  function addAllColumnHeaders(myList, selector)
-  {
-    var columnSet = [];
-    var headerTr$ = $('<tr/>');
-
-    for (var i = 0 ; i < myList.length ; i++) {
-      var rowHash = myList[i];
-      for (var key in rowHash) {
-        if ($.inArray(key, columnSet) == -1) {
-          columnSet.push(key);
-          headerTr$.append($('<th/>').html(key));
-        }
-      }
-    }
-    $(selector).append(headerTr$);
-    return columnSet;
-  }
-  </script>
+  <script src="helper.js"></script>
+  <link rel="stylesheet" type="text/css" href="default.css">
 </head>
-
-<style>
-.body{ font: 14px Arial; }
-.client_label{ position: relative; float: left; top: 65px; }
-.duo_label{ position: relative; float: left; top: 36px; }
-.email_label{ position: relative; float: left; top: 7px; }
-.form_content{ height: 40%; width: 100%; position: relative; margin-bottom: 10px; }
-.input_form{ position: relative; top: 56px; width: 356px; height: 300px; }
-.login_button { width: 200px; height: 40px; background-color: #FFFFFF; color: #000000; }
-.main_message{ position: relative; width: 77%; text-align: left; top: 9%; }
-.main_widget{ border: solid grey 1px; width: 466px; height: 280px; }
-.result_table{ width: 1200px; height: 280px;}
-.text-field{ position: relative; width: 267px; float: right; }
-.title{ margin-top: 10%; font-size: 20px; }
-#user_name{ padding-left: 5px; border: 1px solid gray; height: 28px; }
-#duo_code{ padding-left: 5px; position: relative; top: 17px; border: 1px solid gray; height: 28px; }
-#client_email{ padding-left: 5px; position: relative; top: 33px; border: 1px solid gray; height: 28px; }
-</style>
 
 <body class="body">
   <center>
